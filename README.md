@@ -1,1 +1,1 @@
-the codes are still in delevements so there might ne bugs and errors , if found any bugs -- raied a issue , ty 
+The code is still under development, so there may be some bugs or errors. If you find any issues, please raise an issue on GitHub. Thanks! 🙌
