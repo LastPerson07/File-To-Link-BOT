@@ -1,0 +1,129 @@
+{
+  "name": "FILE-TO-LINK-BOT",
+  "description": "A Kurigram Telegram bot to stream Telegram files to web. Updated by @LastPerson07",
+  "keywords": [
+    "telegram",
+    "stream",
+    "web",
+    "pyrogram",
+    "bot",
+    "lastperson07"
+  ],
+  "repository": "https://github.com/LastPerson07/File-To-Link-BOT",
+  "logo": "https://i.postimg.cc/1Xw1wxDw/photo-2025-10-19-07-30-34.jpg",
+  "success_url": "/",
+  "env": {
+    "APP_NAME": {
+      "description": "Heroku app name (Required for Heroku)",
+      "required": false
+    },
+    "API_ID": {
+      "description": "Get this value from https://my.telegram.org",
+      "required": true
+    },
+    "API_HASH": {
+      "description": "Get this value from https://my.telegram.org",
+      "required": true
+    },
+    "BOT_TOKEN": {
+      "description": "Get this from @BotFather",
+      "required": true
+    },
+    "SESSION": {
+      "description": "Pyrogram session string or name",
+      "value": "appbot"
+    },
+    "OWNER_USERNAME": {
+      "description": "Bot owner's Telegram username (Without @)",
+      "value": "LastPerson07"
+    },
+    "ADMINS": {
+      "description": "List of admin Telegram user IDs, space separated",
+      "required": true
+    },
+    "BIN_CHANNEL": {
+      "description": "File store channel ID (Starts with -100)",
+      "required": true
+    },
+    "LOG_CHANNEL": {
+      "description": "Log channel ID (Starts with -100)",
+      "required": true
+    },
+    "AUTH_CHANNEL": {
+      "description": "Force subscribe channels ID (Space separated, starts with -100)",
+      "required": false
+    },
+    "CHANNEL": {
+      "description": "Public updates channel URL",
+      "value": "https://t.me/LastPerson07"
+    },
+    "SUPPORT": {
+      "description": "Support group URL",
+      "value": "https://t.me/LastPerson07"
+    },
+    "DATABASE_URI": {
+      "description": "MongoDB Connection URI",
+      "required": true
+    },
+    "DATABASE_NAME": {
+      "description": "MongoDB Database Name",
+      "value": "lastperson07"
+    },
+    "FSUB": {
+      "description": "Enable Force Subscribe (True/False)",
+      "value": "False"
+    },
+    "ENABLE_LIMIT": {
+      "description": "Enable File Limit per user (True/False)",
+      "value": "True"
+    },
+    "MAINTENANCE_MODE": {
+      "description": "Enable Maintenance Mode (True/False)",
+      "value": "False"
+    },
+    "MAX_FILES": {
+      "description": "Max files allowed per user",
+      "value": "10"
+    },
+    "PING_INTERVAL": {
+      "description": "Ping interval (seconds)",
+      "value": "1200"
+    },
+    "URL": {
+      "description": "Your App URL (Optional, auto-generated if empty)",
+      "required": false
+    },
+    "PORT": {
+      "description": "Port number for web server",
+      "value": "2626"
+    },
+    "WORKERS": {
+      "description": "Number of Async Workers",
+      "value": "4"
+    },
+    "PICS": {
+      "description": "Bot Info Image URL",
+      "required": false
+    },
+    "FILE_PIC": {
+      "description": "File Thumbnail Image URL",
+      "required": false
+    },
+    "FILE_CAPTION": {
+      "description": "Custom File Caption",
+      "required": false
+    }
+  },
+  "addons": [],
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}

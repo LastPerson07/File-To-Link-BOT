@@ -1,0 +1,11 @@
+kurigram
+tgcrypto
+pymongo[srv]>=4.9,<5.0
+aiohttp
+python-dotenv
+motor
+aiofiles
+dnspython
+psutil
+jinja2
+pytz

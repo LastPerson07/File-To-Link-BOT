@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ file_name }}</title>
+    <link rel="icon" href="https://cdn.jsdelivr.net/gh/TelegramPlayGround/TG-API@main/webapp/favicon.ico">
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --bg: #0b0c10;
+            --card: #1f2833;
+            --accent: #66fcf1;
+            --accent-dark: #45a29e;
+            --text: #c5c6c7;
+            --text-light: #ffffff;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            padding: 16px 20px;
+            background: rgba(31, 40, 51, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(102, 252, 241, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .brand {
+            font-weight: 800;
+            color: var(--accent);
+            font-size: 1.1rem;
+            text-decoration: none;
+        }
+        .support-btn {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 14px;
+            border: 1px solid var(--accent-dark);
+            border-radius: 8px;
+            transition: 0.2s;
+        }
+        .support-btn:hover { background: var(--accent-dark); color: #000; }
+        main {
+            flex: 1;
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .player-box {
+            background: var(--card);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(102, 252, 241, 0.15);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        .video-js {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            background: #000;
+        }
+        .vjs-big-play-button {
+            background: rgba(102, 252, 241, 0.85) !important;
+            color: #000 !important;
+            border: none !important;
+        }
+        .info-card {
+            margin-top: 18px;
+            background: var(--card);
+            border-radius: 14px;
+            padding: 18px 20px;
+            border: 1px solid rgba(102, 252, 241, 0.1);
+        }
+        .file-title {
+            color: var(--text-light);
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin: 0 0 10px;
+            word-break: break-word;
+        }
+        .meta {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+        .meta span { display: flex; align-items: center; gap: 6px; }
+        .actions {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.15s, opacity 0.15s;
+        }
+        .btn:hover { transform: translateY(-2px); opacity: 0.9; }
+        .btn-primary { background: var(--accent); color: #000; }
+        .btn-telegram { background: #229ed9; color: #fff; }
+        .btn-download { background: var(--accent-dark); color: #fff; }
+        .btn-share { background: #2d3748; color: var(--text-light); }
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #6c757d;
+            border-top: 1px solid rgba(102, 252, 241, 0.08);
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+        .note {
+            margin-top: 14px;
+            padding: 12px 14px;
+            background: rgba(255, 193, 7, 0.08);
+            border-left: 3px solid #ffc107;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #e0e0e0;
+        }
+        @media (max-width: 480px) {
+            main { padding: 12px; }
+            .file-title { font-size: 1rem; }
+            .btn { padding: 11px 12px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="/" class="brand"><i class="fa-solid fa-play-circle"></i> StreamHub</a>
+        <a href="tg://resolve?domain=LastPerson07" class="support-btn"><i class="fa-brands fa-telegram"></i> Support</a>
+    </header>
+
+    <main>
+        <div class="player-box">
+            <video
+                id="videoPlayer"
+                class="video-js vjs-default-skin vjs-big-play-centered"
+                controls
+                preload="auto"
+                poster=""
+                data-setup='{}'>
+                <source src="{{ file_url }}" type="{{ mime_type }}">
+                <p class="vjs-no-js">Enable JavaScript to play this video.</p>
+            </video>
+        </div>
+
+        <div class="info-card">
+            <h1 class="file-title">{{ file_name }}</h1>
+            <div class="meta">
+                <span><i class="fa-solid fa-weight-hanging"></i> {{ file_size }}</span>
+                <span><i class="fa-solid fa-fingerprint"></i> {{ file_unique_id[:12] }}</span>
+            </div>
+
+            <div class="actions">
+                <a class="btn btn-download" href="{{ file_url }}" download><i class="fa-solid fa-download"></i> Download</a>
+                <a class="btn btn-telegram" href="{{ file_get }}" target="_blank"><i class="fa-brands fa-telegram"></i> Telegram</a>
+                <button class="btn btn-share" onclick="shareLink()"><i class="fa-solid fa-share-nodes"></i> Share</button>
+            </div>
+
+            <div class="note">
+                <i class="fa-solid fa-circle-info"></i>
+                <strong>Audio:</strong> Playback depends on the file's codec and your browser. MKV files and AC3/DTS audio may not play in-browser — download the file and use a media player for full dual-audio support.
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>Powered by <a href="https://t.me/LastPerson07">LastPerson07</a> • Built with Video.js</p>
+    </footer>
+
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+    <script>
+        const player = videojs('videoPlayer', {
+            html5: {
+                vhs: {
+                    limitRenditionByPlayerDimensions: true,
+                    useDevicePixelRatio: true
+                }
+            },
+            playbackRates: [0.5, 1, 1.25, 1.5, 2],
+            fluid: true
+        });
+
+        async function shareLink() {
+            const url = window.location.href;
+            try {
+                if (navigator.share) {
+                    await navigator.share({ title: document.title, url: url });
+                } else {
+                    await navigator.clipboard.writeText(url);
+                    alert('Link copied to clipboard!');
+                }
+            } catch (err) {
+                console.log('Share cancelled or failed', err);
+            }
+        }
+    </script>
+</body>
+</html>

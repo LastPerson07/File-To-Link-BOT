@@ -1,0 +1,24 @@
+type: web
+name: av-file-to-link-pro
+project: lastperson07
+lang: docker
+docker:
+  dockerfile: Dockerfile
+instance_type: free
+regions:
+  - fra
+routes:
+  - path: /
+    port: 8080
+env:
+  PORT: 8080
+  API_ID: 
+  API_HASH: 
+  BOT_TOKEN: 
+  ADMINS: 
+  OWNER_USERNAME: 
+  DATABASE_URI: 
+  BIN_CHANNEL: 
+  LOG_CHANNEL: 
+  URL: 
+  
