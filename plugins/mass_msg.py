@@ -10,7 +10,7 @@ import asyncio
 import logging
 
 from database.store import store
-from settings import ADMINS
+from config import ADMINS
 from keyboards import ButtonStyle
 from helpers import get_readable_time
 

@@ -6,7 +6,7 @@ import urllib.parse
 from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
-from settings import URL, BIN_CHANNEL, FSUB, MAX_FILES
+from config import URL, BIN_CHANNEL, FSUB, MAX_FILES
 from database.store import store
 from api.helpers.file_meta import get_hash
 from helpers import humanbytes

@@ -8,7 +8,7 @@ from pyrogram import Client, filters
 from pyrogram.enums import ParseMode
 from pyrogram.types import Message
 from database.store import store
-from settings import ADMINS
+from config import ADMINS
 from texts import Texts
 from helpers import humanbytes
 

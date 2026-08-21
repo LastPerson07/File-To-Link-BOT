@@ -1,6 +1,6 @@
 from pyrogram import Client, filters
 from pyrogram.types import Message
-from settings import ADMINS
+from config import ADMINS
 from database.store import store
 
 @Client.on_message(filters.command("ban") & filters.user(ADMINS))

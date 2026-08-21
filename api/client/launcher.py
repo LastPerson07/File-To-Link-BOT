@@ -5,7 +5,7 @@ from typing import Tuple, Optional
 from pyrogram import Client
 
 from . import tg_clients, active_loads, app_bot
-from config import config
+from config import ALL_BOT_TOKENS, API_ID, API_HASH, SLEEP_THRESHOLD
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ async def initialize_clients():
     tg_clients[0] = app_bot
     active_loads[0] = 0
 
-    tokens = config.all_bot_tokens
+    tokens = ALL_BOT_TOKENS
     if len(tokens) <= 1:
         logger.info("No extra bot tokens configured, using the main bot only")
         return
@@ -33,10 +33,10 @@ async def initialize_clients():
             logger.info(f"Starting download bot client {client_id}...")
             client = await Client(
                 name=str(client_id),
-                api_id=config.api_id,
-                api_hash=config.api_hash,
+                api_id=API_ID,
+                api_hash=API_HASH,
                 bot_token=token,
-                sleep_threshold=config.sleep_threshold,
+                sleep_threshold=SLEEP_THRESHOLD,
                 no_updates=True,
                 in_memory=True,
                 workers=20,

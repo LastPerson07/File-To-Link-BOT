@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import aiohttp
-from settings import PING_INTERVAL, URL
+from config import PING_INTERVAL, URL
 
 logger = logging.getLogger(__name__)
 

@@ -8,7 +8,7 @@ except ImportError:
         SUCCESS = 0
         DANGER = 0
 
-from settings import CHANNEL, SUPPORT
+from config import CHANNEL, SUPPORT
 from helpers import app_state
 
 __all__ = ["ButtonStyle", "_start_markup"]

@@ -11,19 +11,19 @@ logging.getLogger("aiohttp").setLevel(logging.ERROR)
 logging.getLogger("aiohttp.web").setLevel(logging.ERROR)
 
 from pyrogram import Client
-from config import config
+from config import SESSION, API_ID, API_HASH, BOT_TOKEN, SLEEP_THRESHOLD
 
 
 class AppClient(Client):
     def __init__(self):
         super().__init__(
-            name=config.session,
-            api_id=config.api_id,
-            api_hash=config.api_hash,
-            bot_token=config.bot_token,
+            name=SESSION,
+            api_id=API_ID,
+            api_hash=API_HASH,
+            bot_token=BOT_TOKEN,
             workers=50,
             plugins={"root": "plugins"},
-            sleep_threshold=config.sleep_threshold,
+            sleep_threshold=SLEEP_THRESHOLD,
         )
 
 

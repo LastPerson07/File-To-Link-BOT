@@ -4,13 +4,13 @@ import logging
 from datetime import date, datetime
 import pytz
 from aiohttp import web
-from pyrogram import idle, __version__
+from pyrogram import idle, __version__ as pyrogram_version
 from pyrogram.raw.all import layer
 import pyrogram.utils
-from settings import ON_HEROKU, LOG_CHANNEL, ADMINS, PORT
+from config import ON_HEROKU, LOG_CHANNEL, ADMINS, PORT
 from helpers import app_state, keep_alive
 from texts import Texts
-from api.helpers import __version__
+from api.helpers import __version__ as app_version
 from api import create_app
 from api.client import app_bot
 from api.client.launcher import initialize_clients
@@ -31,7 +31,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 
 sys.excepthook = handle_exception
 
-# Hack for Channel ID limits
 pyrogram.utils.MIN_CHANNEL_ID = -1009147483647
 
 logging.basicConfig(
@@ -66,7 +65,7 @@ async def boot_app():
         app_state.B_NAME = me.first_name
 
         logging.info(
-            f"{me.first_name} with Pyrogram v{__version__} (Layer {layer}) started on {me.username}."
+            f"{me.first_name} with Pyrogram v{pyrogram_version} (Layer {layer}) started on {me.username}."
         )
 
         tz = pytz.timezone("Asia/Kolkata")
@@ -77,7 +76,7 @@ async def boot_app():
         try:
             await app_bot.send_message(
                 chat_id=LOG_CHANNEL,
-                text=Texts.RESTART_TXT.format(today, time, __version__)
+                text=Texts.RESTART_TXT.format(today, time, app_version)
             )
         except Exception:
             logger.error("LOG CHANNEL ERROR", exc_info=True)

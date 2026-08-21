@@ -4,7 +4,7 @@ from pyrogram.errors import UserNotParticipant, ChatAdminRequired
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from pyrogram.enums import ParseMode
 from texts import Texts
-from settings import AUTH_PICS, AUTH_CHANNEL, ENABLE_LIMIT
+from config import AUTH_PICS, AUTH_CHANNEL, ENABLE_LIMIT
 from database.store import store
 from keyboards import ButtonStyle
 

@@ -1,4 +1,5 @@
 import time
+import asyncio
 from aiohttp import web
 import re
 import math
@@ -11,7 +12,7 @@ from api.client.launcher import pick_client
 from api.server.errors import FileNotFound, InvalidHash
 from api.helpers.stream_engine import FileStreamer
 from api.helpers.page_builder import build_page
-from settings import MULTI_CLIENT
+from config import MULTI_CLIENT
 from helpers import app_state, get_readable_time
 from api.helpers import boot_time, __version__
 from database.store import store
@@ -170,9 +171,8 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
             mime_type = "application/octet-stream"
             file_name = f"{secrets.token_hex(2)}.unknown"
 
-    return web.Response(
+    response = web.StreamResponse(
         status=206 if range_header else 200,
-        body=body,
         headers={
             "Content-Type": f"{mime_type}",
             "Content-Range": f"bytes {from_bytes}-{until_bytes}/{file_size}",
@@ -180,4 +180,13 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
             "Content-Disposition": f'{disposition}; filename="{file_name}"',
             "Accept-Ranges": "bytes",
         },
-)
+    )
+    await response.prepare(request)
+    try:
+        async for chunk in body:
+            await response.write(chunk)
+    except (ConnectionResetError, ConnectionError, asyncio.CancelledError):
+        pass
+    finally:
+        await body.aclose()
+    return response

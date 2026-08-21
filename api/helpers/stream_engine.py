@@ -5,14 +5,15 @@ from typing import AsyncIterator, Dict
 from pyrogram import Client, raw, utils
 from pyrogram.errors import FloodWait
 from pyrogram.file_id import FileId, FileType, ThumbnailSource
-from pyrogram.session import Session
 
-from settings import BIN_CHANNEL
+from config import BIN_CHANNEL
 from api.client import active_loads
 from api.server.errors import FileNotFound
 from .file_meta import resolve_file_id
 
-PREFETCH = 8
+log = logging.getLogger(__name__)
+
+CONCURRENT_FETCHES = 6
 
 
 class FileStreamer:
@@ -37,7 +38,7 @@ class FileStreamer:
         self.cached_file_ids[id] = file_id
         return file_id
 
-    async def open_media_session(self, client: Client, file_id: FileId) -> Session:
+    async def open_media_session(self, client: Client, file_id: FileId):
         return await client.get_session(file_id.dc_id, is_media=True)
 
     @staticmethod
@@ -88,86 +89,54 @@ class FileStreamer:
         part_count: int,
         chunk_size: int,
     ) -> AsyncIterator[bytes]:
-        client = self.client
         active_loads[index] += 1
+        tasks = []
         try:
-            media_session = await self.open_media_session(client, file_id)
+            media_session = await self.open_media_session(self.client, file_id)
             location = await self.get_location(file_id)
-            queue: asyncio.Queue = asyncio.Queue(maxsize=PREFETCH)
-            stop = asyncio.Event()
 
-            async def producer():
-                try:
-                    off = offset
-                    for part in range(1, part_count + 1):
-                        if stop.is_set():
-                            break
-                        while True:
-                            try:
-                                r = await media_session.send(
-                                    raw.functions.upload.GetFile(
-                                        location=location, offset=off, limit=chunk_size
-                                    )
-                                )
-                                break
-                            except FloodWait as e:
-                                await asyncio.sleep(e.value)
-                        if not isinstance(r, raw.types.upload.File):
-                            break
-                        await queue.put((part, r.bytes))
-                        off += chunk_size
-                except asyncio.CancelledError:
-                    raise
-                except Exception as e:
-                    logging.error(f"Stream producer error: {e}")
-                finally:
+            sem = asyncio.Semaphore(CONCURRENT_FETCHES)
+
+            async def fetch_part(part: int) -> bytes:
+                part_offset = offset + (part - 1) * chunk_size
+                async with sem:
                     while True:
                         try:
-                            queue.put_nowait(None)
-                            break
-                        except asyncio.QueueFull:
-                            try:
-                                queue.get_nowait()
-                            except asyncio.QueueEmpty:
-                                break
+                            r = await media_session.send(
+                                raw.functions.upload.GetFile(
+                                    location=location,
+                                    offset=part_offset,
+                                    limit=chunk_size,
+                                )
+                            )
+                            return r.bytes if isinstance(r, raw.types.upload.File) else b""
+                        except FloodWait as e:
+                            await asyncio.sleep(e.value)
 
-            producer_task = asyncio.create_task(producer())
-            try:
-                while True:
-                    item = await queue.get()
-                    if item is None:
-                        break
-                    part, chunk = item
-                    if not chunk:
-                        break
-                    if part_count == 1:
-                        yield chunk[first_part_cut:last_part_cut]
-                    elif part == 1:
-                        yield chunk[first_part_cut:]
-                    elif part == part_count:
-                        yield chunk[:last_part_cut]
-                    else:
-                        yield chunk
-            finally:
-                stop.set()
-                while True:
-                    try:
-                        queue.get_nowait()
-                    except asyncio.QueueEmpty:
-                        break
-                try:
-                    await asyncio.wait_for(producer_task, timeout=20)
-                except (asyncio.TimeoutError, asyncio.CancelledError, Exception):
-                    producer_task.cancel()
-                    try:
-                        await producer_task
-                    except (asyncio.CancelledError, Exception):
-                        pass
+            tasks = [asyncio.ensure_future(fetch_part(p)) for p in range(1, part_count + 1)]
+
+            for part, task in enumerate(tasks, start=1):
+                chunk = await task
+                if not chunk:
+                    break
+                if part_count == 1:
+                    yield chunk[first_part_cut:last_part_cut]
+                elif part == 1:
+                    yield chunk[first_part_cut:]
+                elif part == part_count:
+                    yield chunk[:last_part_cut]
+                else:
+                    yield chunk
         except (TimeoutError, AttributeError) as e:
-            logging.error(f"Error yielding file: {e}")
+            log.error(f"Error yielding file: {e}")
         except Exception as e:
-            logging.error(f"Unexpected error in stream_file: {e}")
+            log.error(f"Unexpected error in stream_file: {e}")
         finally:
+            for task in tasks:
+                if not task.done():
+                    task.cancel()
+            if tasks:
+                await asyncio.gather(*tasks, return_exceptions=True)
             active_loads[index] -= 1
 
     async def clean_cache(self) -> None:

@@ -1,7 +1,7 @@
 import datetime
 import logging
 from pymongo.errors import DuplicateKeyError
-from settings import DB_URL, DB_NAME, RATE_LIMIT_TIMEOUT, MAX_FILES
+from config import DB_URL, DB_NAME, RATE_LIMIT_TIMEOUT, MAX_FILES
 
 logger = logging.getLogger(__name__)
 

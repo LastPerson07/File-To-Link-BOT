@@ -2,7 +2,7 @@ import os
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from database.store import store
-from settings import ADMINS
+from config import ADMINS
 
 @Client.on_message(filters.command("delfile") & filters.user(ADMINS))
 async def delete_user_files(client: Client, message: Message):

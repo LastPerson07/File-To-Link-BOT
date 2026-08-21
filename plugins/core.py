@@ -6,12 +6,13 @@ from database.store import store
 from pyrogram import Client, filters
 from pyrogram.errors import FloodWait
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from settings import (
+from config import (
     LOG_CHANNEL, FSUB, BIN_CHANNEL,
     CHANNEL, PICS, FILE_PIC, FILE_CAPTION
 )
 from plugins.checks import membership_check
 from plugins.bulk_mode import decode
+from plugins.buttons import _paged_markup
 from api.helpers import about_text
 from helpers import app_state, cleanup_after_delay
 from keyboards import ButtonStyle, _start_markup
@@ -205,23 +206,11 @@ async def list_user_files(client, message: Message):
     files = await store.files.find({"user_id": user_id}).to_list(length=100)
     if not files:
         return await message.reply_text("❌ Yᴏᴜ ʜᴀᴠᴇɴ'ᴛ ᴜᴘʟᴏᴀᴅᴇᴅ ᴀɴʏ ғɪʟᴇꜱ.")
-    page = 1
-    per_page = 7
-    start = (page - 1) * per_page
-    end = start + per_page
-    total_pages = (len(files) + per_page - 1) // per_page
-    btns = []
-    for f in files[start:end]:
-        name = f["file_name"][:40]
-        btns.append([InlineKeyboardButton(name, callback_data=f"sendfile_{f['file_id']}", style=ButtonStyle.PRIMARY)])
-    nav_btns = []
-    if page < total_pages:
-        nav_btns.append(InlineKeyboardButton("➡️ Nᴇxᴛ", callback_data=f"filespage_{page + 1}", style=ButtonStyle.SUCCESS))
-    nav_btns.append(InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close_data", style=ButtonStyle.DANGER))
-    btns.append(nav_btns)
-    await message.reply_photo(photo=FILE_PIC,
-        caption=f"📁 Tᴏᴛᴀʟ ғɪʟᴇꜱ: {len(files)} | Pᴀɢᴇ {page}/{total_pages}",
-        reply_markup=InlineKeyboardMarkup(btns)
+    total_pages = (len(files) + 6) // 7
+    await message.reply_photo(
+        photo=FILE_PIC,
+        caption=f"📁 Tᴏᴛᴀʟ ғɪʟᴇꜱ: {len(files)} | Pᴀɢᴇ 1/{total_pages}",
+        reply_markup=_paged_markup(files, page=1, mode="files"),
     )
 
 @Client.on_message(filters.private & filters.command("del_files"))
@@ -230,22 +219,9 @@ async def delete_files_list(client, message):
     files = await store.files.find({"user_id": user_id}).to_list(length=100)
     if not files:
         return await message.reply_text("❌ Yᴏᴜ ʜᴀᴠᴇɴ'ᴛ ᴜᴘʟᴏᴀᴅᴇᴅ ᴀɴʏ ғɪʟᴇꜱ.")
-    page = 1
-    per_page = 7
-    start = (page - 1) * per_page
-    end = start + per_page
-    total_pages = (len(files) + per_page - 1) // per_page
-    btns = []
-    for f in files[start:end]:
-        name = f["file_name"][:40]
-        btns.append([InlineKeyboardButton(name, callback_data=f"deletefile_{f['file_id']}", style=ButtonStyle.DANGER)])
-    nav_btns = []
-    if page < total_pages:
-        nav_btns.append(InlineKeyboardButton("➡️ Nᴇxᴛ", callback_data=f"delfilespage_{page + 1}", style=ButtonStyle.SUCCESS))
-    nav_btns.append(InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close_data", style=ButtonStyle.DANGER))
-    btns.append(nav_btns)
-    await message.reply_photo(photo=FILE_PIC,
-        caption=f"📁 Tᴏᴛᴀʟ ғɪʟᴇꜱ: {len(files)} | Pᴀɢᴇ {page}/{total_pages}",
-        reply_markup=InlineKeyboardMarkup(btns)
-   )
-    
+    total_pages = (len(files) + 6) // 7
+    await message.reply_photo(
+        photo=FILE_PIC,
+        caption=f"📁 Tᴏᴛᴀʟ ғɪʟᴇꜱ: {len(files)} | Pᴀɢᴇ 1/{total_pages}",
+        reply_markup=_paged_markup(files, page=1, mode="delete"),
+    )

@@ -3,7 +3,7 @@ from texts import Texts
 from database.store import store
 from pyrogram import Client, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from settings import ADMINS, URL, CHANNEL, BIN_CHANNEL, FILE_CAPTION
+from config import ADMINS, URL, CHANNEL, BIN_CHANNEL, FILE_CAPTION
 from api.helpers.file_meta import get_hash
 from helpers import app_state
 from api.helpers import about_text

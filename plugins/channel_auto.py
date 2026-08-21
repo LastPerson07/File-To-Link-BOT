@@ -3,7 +3,7 @@ import html
 import logging
 from api.helpers.file_meta import get_hash
 from pyrogram import Client, filters, enums
-from settings import BIN_CHANNEL, URL
+from config import BIN_CHANNEL, URL
 from database.store import store
 from pyrogram.errors import FloodWait
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton

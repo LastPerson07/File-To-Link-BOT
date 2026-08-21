@@ -11,7 +11,7 @@ from api.helpers.speedtest import run_speedtest
 from api.client import tg_clients, active_loads
 from database.store import store
 from helpers import get_readable_time, humanbytes
-from settings import ADMINS
+from config import ADMINS
 
 ADMIN = filters.user(ADMINS)
 
@@ -49,10 +49,10 @@ async def status_command(client, message):
 @Client.on_message(filters.command("shell") & ADMIN)
 async def shell_command(client, message):
     if len(message.command) < 2:
-        return await message.reply_text("⚠️ Usage: `/shell <command>`", quote=True)
+        return await message.reply_text("⚠️ Usage: /shell <command>")
     command = " ".join(message.command[1:])
     status_msg = await message.reply_text(
-        f"⚙️ Executing:\n<code>{html.escape(command)}</code>", quote=True
+        f"⚙️ Executing:\n<code>{html.escape(command)}</code>"
     )
     try:
         process = await asyncio.create_subprocess_shell(

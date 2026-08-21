@@ -6,7 +6,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import FloodWait
 import asyncio
 from helpers import app_state
-from settings import BATCH_LIMIT, BIN_CHANNEL, LOG_CHANNEL
+from config import BATCH_LIMIT, BIN_CHANNEL, LOG_CHANNEL
 from keyboards import ButtonStyle
 
 def encode(string):

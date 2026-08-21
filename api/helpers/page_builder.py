@@ -2,7 +2,7 @@ import jinja2
 import urllib.parse
 import aiofiles
 import logging
-from settings import URL, BIN_CHANNEL
+from config import URL, BIN_CHANNEL
 from helpers import app_state, humanbytes
 from api.client import app_bot
 from api.helpers.file_meta import resolve_file_id
